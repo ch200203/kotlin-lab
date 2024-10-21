@@ -2,10 +2,12 @@ package com.study.kopringbatch.config
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobExecution
 import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.batch.core.launch.JobLauncher
+import org.springframework.batch.repeat.RepeatStatus
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -34,7 +36,7 @@ class ChunkJobConfigTest {
 
         // Job 상태 확인
         assertThat(jobExecution.status.isUnsuccessful).isFalse()
-        assertThat(jobExecution.exitStatus.exitCode).isEqualTo("COMPLETED")
+        assertThat(jobExecution.exitStatus.exitCode).isEqualTo(ExitStatus.COMPLETED.exitCode)
 
         // H2 DB에 데이터가 정상적으로 저장되었는지 확인 가능
         dataSource.connection.use { connection ->
