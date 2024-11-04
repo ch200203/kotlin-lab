@@ -17,7 +17,7 @@ class CsvReader {
         return FlatFileItemReaderBuilder<Map<String, String>>()
             .name("csvItemReader")
             .resource(ClassPathResource(FILE_NAME))
-            .encoding("EUC-KR")
+            .encoding("UTF-8")
             .linesToSkip(1)
             .delimited()
             .delimiter(DelimitedLineTokenizer.DELIMITER_COMMA)

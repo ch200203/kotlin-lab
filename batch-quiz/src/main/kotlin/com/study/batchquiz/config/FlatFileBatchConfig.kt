@@ -1,6 +1,7 @@
 package com.study.batchquiz.config
 
 import com.study.batchquiz.CsvProcessor
+import com.study.batchquiz.CsvWriter
 import com.study.batchquiz.reader.CsvReader
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
@@ -18,6 +19,7 @@ class FlatFileBatchConfig(
     private val transactionManager: PlatformTransactionManager,
     private val csvReader: CsvReader,
     private val csvProcessor: CsvProcessor,
+    private val csvWriter: CsvWriter,
 ) {
 
 
