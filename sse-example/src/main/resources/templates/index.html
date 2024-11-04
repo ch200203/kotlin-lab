@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>SSE Example</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<h1>Server-Sent Events</h1>
+<div id="messages"></div>
+
+<script>
+    const eventSource = new EventSource("/sse");
+
+    eventSource.onmessage = function(event) {
+        const messagesDiv = document.getElementById("messages");
+        const newMessage = document.createElement("div");
+        newMessage.textContent = `Received: ${event.data}`;
+        messagesDiv.appendChild(newMessage);
+    };
+
+    eventSource.onerror = function() {
+        console.error("Error occurred with SSE connection.");
+        eventSource.close();
+    };
+</script>
+</body>
+</html>

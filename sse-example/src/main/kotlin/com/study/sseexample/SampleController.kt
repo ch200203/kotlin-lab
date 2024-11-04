@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.flow
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.servlet.ModelAndView
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import java.io.IOException
 import java.util.concurrent.Executors
@@ -54,5 +55,10 @@ class SampleController {
         }
 
         return emitter
+    }
+
+    @GetMapping("/")
+    fun home(): ModelAndView {
+        return ModelAndView("index") // "index"는 templates 디렉토리의 index.html 파일을 의미
     }
 }
