@@ -7,19 +7,18 @@ import java.util.concurrent.ConcurrentHashMap
 class CacheManager {
     private val cache = ConcurrentHashMap<String, String>()
 
-    fun put(key: String, value: String) {
+    fun put(
+        key: String,
+        value: String,
+    ) {
         cache[key] = value
     }
 
-    fun get(key: String): String? {
-        return cache[key]
-    }
+    fun get(key: String): String? = cache[key]
 
     fun remove(key: String) {
         cache.remove(key)
     }
 
-    fun containsKey(key: String): Boolean {
-        return cache.containsKey(key)
-    }
+    fun containsKey(key: String): Boolean = cache.containsKey(key)
 }

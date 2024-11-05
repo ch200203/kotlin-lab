@@ -8,15 +8,19 @@ import java.util.concurrent.TimeUnit
 
 @Service
 class SseService(
-    private val cacheManager: CacheManager
+    private val cacheManager: CacheManager,
 ) {
     /**
      * 긴단한 구현을 위해 newSingleThreadScheduledExecutor 를 사용했지만...
      * Observer 를 사용 한다면? 리소스 낭비도 적고 괜찮지 않으려나?
      */
-    fun checkKeyValue(key: String, emitter: SseEmitter) {
+    fun checkKeyValue(
+        key: String,
+        emitter: SseEmitter,
+    ) {
         println("key : $key")
         println("checkKey : $cacheManager.get(key)")
+
         val executor = Executors.newSingleThreadScheduledExecutor()
         executor.scheduleAtFixedRate({
             val value = cacheManager.get(key)
@@ -32,7 +36,7 @@ class SseService(
                 }
             } else if (value == "N") {
                 try {
-                    emitter.send("Key $key Value : ${cacheManager.get(key).toString()}")
+                    emitter.send("Key $key Value : ${cacheManager.get(key)}")
                 } catch (e: IOException) {
                     emitter.completeWithError(e)
                     executor.shutdown()

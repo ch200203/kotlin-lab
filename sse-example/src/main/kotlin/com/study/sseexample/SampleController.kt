@@ -14,41 +14,44 @@ import java.util.concurrent.TimeUnit
 
 @RestController
 class SampleController {
-
     @GetMapping(value = ["/sse/flow/connect"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    suspend fun sseExample(): Flow<String> = flow {
-
-        for (i: Int in 1..10) {
-            emit("Event at $i ${System.currentTimeMillis()}")
-            delay(1000)  // 1초마다 이벤트 전송
+    suspend fun sseExample(): Flow<String> =
+        flow {
+            for (i: Int in 1..10) {
+                emit("Event at $i ${System.currentTimeMillis()}")
+                delay(1000) // 1초마다 이벤트 전송
+            }
         }
-
-    }
 
     @GetMapping("/sse")
     fun streamEvents(): SseEmitter {
         val emitter = SseEmitter()
         val executor = Executors.newSingleThreadScheduledExecutor()
 
-        executor.scheduleAtFixedRate(object : Runnable {
-            var count = 0
+        executor.scheduleAtFixedRate(
+            object : Runnable {
+                var count = 0
 
-            override fun run() {
-                try {
-                    if (count < 10) {
-                        emitter.send("Event at ${System.currentTimeMillis()}")
-                        count++
-                    } else {
-                        emitter.send("finish")
-                        emitter.complete()
+                override fun run() {
+                    try {
+                        if (count < 10) {
+                            emitter.send("Event at ${System.currentTimeMillis()}")
+                            count++
+                        } else {
+                            emitter.send("finish")
+                            emitter.complete()
+                            executor.shutdown()
+                        }
+                    } catch (e: IOException) {
+                        emitter.completeWithError(e)
                         executor.shutdown()
                     }
-                } catch (e: IOException) {
-                    emitter.completeWithError(e)
-                    executor.shutdown()
                 }
-            }
-        }, 0, 1, TimeUnit.SECONDS) // 1초마다 이벤트 전송
+            },
+            0,
+            1,
+            TimeUnit.SECONDS,
+        ) // 1초마다 이벤트 전송
 
         emitter.onCompletion {
             executor.shutdown()

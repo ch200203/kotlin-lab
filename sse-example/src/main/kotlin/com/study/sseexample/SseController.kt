@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:no-wildcard-imports")
+
 package com.study.sseexample
 
 import org.springframework.web.bind.annotation.GetMapping
@@ -6,30 +8,28 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 
 @RestController
 class SseController(
     private val cacheManager: CacheManager,
-    private val sseService: SseService
+    private val sseService: SseService,
 ) {
-    private val emitters = ConcurrentHashMap<String, SseEmitter>()
-
     @GetMapping("/generate")
     fun generateUrl(): String {
         val key = UUID.randomUUID().toString()
         cacheManager.put(key, "N")
-        println("key : ${cacheManager.get(key).toString()}")
-        return "http://localhost:8080/sse?key=$key" // QR 코드 주소 반환
+        println("key : $key")
+        return key
     }
 
     @GetMapping("/sse/{key}")
-    fun streamEvents(@PathVariable key: String): SseEmitter {
+    fun streamEvents(
+        @PathVariable key: String,
+    ): SseEmitter {
         val timeout: Long = 60 * 1000L
         val emitter = SseEmitter(timeout)
 
         val cacheValue = cacheManager.get(key)
-        println("cacheValue = ${cacheValue.toString()}")
         if (cacheValue == null) {
             emitter.send("Key $key not found")
             emitter.complete()
@@ -50,7 +50,9 @@ class SseController(
     }
 
     @PostMapping("/update/{key}")
-    fun updateKey(@PathVariable key: String): String {
+    fun updateKey(
+        @PathVariable key: String,
+    ): String {
         println(cacheManager.containsKey(key).toString())
 
         if (cacheManager.get(key) != null) {
