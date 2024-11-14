@@ -14,7 +14,7 @@ class BoardService(
 
     @Transactional
     fun saveBoard(request: BoardRequest): Long {
-        val board = Board(title = request.title, content = request.content)
+        val board = Board(title = request.title!!, content = request.content!!)
         val saveBoard = boardRepository.save(board)
 
         CoroutineScope(Dispatchers.IO).launch {

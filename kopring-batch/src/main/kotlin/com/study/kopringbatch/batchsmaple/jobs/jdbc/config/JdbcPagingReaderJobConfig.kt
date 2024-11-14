@@ -1,6 +1,6 @@
 package com.study.kopringbatch.batchsmaple.jobs.jdbc.config
 
-import com.study.kopringbatch.batchsmaple.jobs.jdbc.Customer
+import com.study.kopringbatch.domain.Customer
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.batch.core.ChunkListener
 import org.springframework.batch.core.Job

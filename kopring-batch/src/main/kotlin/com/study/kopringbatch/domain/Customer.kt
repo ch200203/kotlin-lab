@@ -1,4 +1,4 @@
-package com.study.kopringbatch.batchsmaple.jobs.jdbc
+package com.study.kopringbatch.domain
 
 data class Customer(
     val name: String,

@@ -7,7 +7,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
 
   h2:
     console:
@@ -21,6 +21,8 @@ spring:
   sql:
     init:
       platform: h2
+      data-locations: classpath:data.sql
+      # schema-locations: schema.sql
 
 logging:
   level:
