@@ -3,6 +3,7 @@ package com.study.coboardexample
 import kotlinx.coroutines.*
 import org.junit.jupiter.api.Test
 import java.lang.Thread.sleep
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import java.util.concurrent.StructuredTaskScope
 import kotlin.test.assertEquals
@@ -93,6 +94,8 @@ class BasicTest {
             executor.submit {
                 // Thread sleep 이 일어날 경우 스레드 중단에 대응하려 다른 버추얼 스레드로 전환되어
                 // WithContext 처럼 병렬 로직을 추가하지 않아도 좋다.
+                // Virtual Thread는 sleep(100L)의 스레드 중단에 대응하여
+                // 다른 Virtual Thread로 전환되므로 추가적인 병렬 처리 로직을 구현하지 않아도 자연스럽게 병렬 처리가 이루어집니다.
                 sleep(100L)
                 synchronized(results) {
                     results.add(it)
@@ -112,6 +115,7 @@ class BasicTest {
     fun structuredTest() {
         val results = mutableListOf<Int>()
         try {
+            // 구조화된 동시성 개념을 Virtual Thread와 함께 구현한 것으로 동시 실행되는 작업들을 체계적으로 관리하고 그 생명주기를 명확하게 함
             StructuredTaskScope.ShutdownOnFailure().use { taskScope ->
                 val jobs = List(100) {
                     taskScope.fork {
@@ -152,6 +156,61 @@ class BasicTest {
         }
 
         threads.forEach { it.join() }
+    }
+
+    @Test
+    fun improveCoroutineParallelTest() = runBlocking {
+        // 스레드 별 로컬 리스트 저장
+        val threadLocalResults = ConcurrentHashMap<Thread, MutableList<Int>>()
+
+        val jobs = List(100_000) {
+            launch(Dispatchers.IO) {
+                delay(100L) //  비동기 지연
+                threadLocalResults.computeIfAbsent(Thread.currentThread()) { mutableListOf() }.add(it)
+                println("Thread $it finished, Thread: ${Thread.currentThread()}")
+
+            }
+        }
+
+        jobs.forEach {
+            it.join()
+        }
+
+        val results = threadLocalResults.values.flatten()
+        assertEquals(100_000, results.size)
+        println("Results size: ${results.size}")
+    }
+
+    /**
+     * 코루틴과 버추얼 스레드 테스트환경 구축
+     */
+
+    // runBlocking과 같은 코루틴 스코프를 사용하면 동기식 코드처럼 코루틴을 실행하고 테스트 가능
+    @Test
+    fun coroutineSimpleTest() = runBlocking {
+        // runBlocking을 사용하면 코루틴 함수가 끝날 때까지 대기하고 결과를 검증
+        val result = getNumberSuspend()
+        assertEquals(100, result)
+    }
+
+    private suspend fun getNumberSuspend(): Int {
+        delay(1000)
+        return 100
+    }
+
+    // 코루틴 테스트에서 중요한 점은 `Dispatcher` 를 제어 가능
+    // 실제로 I/O를 사용하는 대신 Dispatchers.Unconfined나 TestCoroutineDispacher를 사용해 가상의 환경에서 테스트 가능
+    @Test
+    fun dispatcherTest() = runBlocking {
+        withContext(Dispatchers.Unconfined) {
+            (1..10).forEach {
+                launch {
+                    println("Unconfined$it: ${Thread.currentThread().name}")
+                    val result = getNumberSuspend()
+                    assertEquals(100, result)
+                }
+            }
+        }
     }
 
 }
