@@ -1,6 +1,5 @@
 package com.study.coboardexample.service
 
-import com.study.coboardexample.controller.TestController
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.scheduling.annotation.Async

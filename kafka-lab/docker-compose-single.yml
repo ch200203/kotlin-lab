@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181 # 주키퍼 기본 포트
+      ZOOKEEPER_TICK_TIME: 2000 # 클러터 구동 시 동기화를 위한 기본 틱 타임
+      ZOOKEEPER_INIT_LIMIT: 5 # 주키퍼 초기화를 위한 제한 시간을 설정한다.
+      ZOOKEEPER_SYNC_LIMIT: 2 # 이 시간은 주키퍼 리더와 나머지 서버들의 싱크 타임이다. /  2로 잡았으므로 2000 * 2 = 4000 으로 4초가 된다.
+    ports:
+      - "22181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1 # 카카 브로커 아이디 지정
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181" # 카프카 <-> 주키퍼 커넥션 대상 설정
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092 # 외부에서 접속가능한 리스너 설정
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT # 보안을 위한 프로토콜 매핑값
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LOG_DIRS: "/tmp/kafka-logs"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
