@@ -13,7 +13,7 @@ class KafkaTopicConfig(
 ) {
 
     companion object {
-        const val DEFAULT_TOPIC: String = "DEF_TOPIC"
+        const val DEFAULT_TOPIC: String = "DEFAULT_TOPIC"
     }
 
     private fun defaultTopic(): NewTopic =

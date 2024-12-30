@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.support.SendResult
-import org.springframework.util.concurrent.ListenableFutureCallback
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -43,9 +42,7 @@ class ProducerController(
             } else {
                 val metadata: RecordMetadata = result.recordMetadata
                 logger.info(
-                    "Message sent successfully with offset: {}, partition: {}",
-                    metadata.offset(),
-                    metadata.partition()
+                    "Message sent successfully with offset: ${metadata.offset()}, partition: ${metadata.partition()}",
                 )
             }
         }

@@ -37,7 +37,7 @@ class KafkaConsumerConfig {
     fun defaultKafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, Any> =
         ConcurrentKafkaListenerContainerFactory<String, Any>().apply {
             consumerFactory = consumerFactory("defaultGroup")
-            concurrency = 1
-            // isAutoStartup = trues
+            setConcurrency(1)
+            // isAutoStartup = true
         }
 }
