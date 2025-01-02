@@ -30,7 +30,7 @@ import org.springframework.transaction.PlatformTransactionManager
 import javax.sql.DataSource
 
 
-@Configuration
+// @Configuration
 class JdbcPagingReaderJobConfig(
 
 ) {

@@ -19,7 +19,7 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.transaction.PlatformTransactionManager
 import javax.sql.DataSource
 
-@Configuration
+// @Configuration
 class JdbcBatchItemJobConfig {
 
     private val log = KotlinLogging.logger { }

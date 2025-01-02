@@ -8,7 +8,7 @@ import org.springframework.batch.item.database.builder.HibernateCursorItemReader
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
-@Configuration
+// @Configuration
 class HibernateCursorItemReaderConfig(
     private val entityManagerFactory: EntityManagerFactory
 ) {

@@ -17,7 +17,7 @@ import kotlin.system.measureNanoTime
 
 @SpringBootTest
 @ActiveProfiles("test")
-@ContextConfiguration(classes = [JobConfig::class])
+// @ContextConfiguration(classes = [JobConfig::class])
 class BatchJobExecutionTimeTests {
 
     @Autowired
