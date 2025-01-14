@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    ports:
+      - "8989:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "localhost:29092,localhost:39092,localhost:49092"
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper-1:22181

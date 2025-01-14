@@ -12,8 +12,23 @@ class MessageListener {
         private val logger = LoggerFactory.getLogger(MessageListener::class.java)
     }
 
-    @KafkaListener(topics = [KafkaTopicConfig.DEFAULT_TOPIC], containerFactory = "defaultKafkaListenerContainerFactory")
+    @KafkaListener(
+        topics = [KafkaTopicConfig.DEFAULT_TOPIC],
+        containerFactory = "defaultKafkaListenerContainerFactory",
+        autoStartup = "true"
+    )
     fun listenDefaultTopic(record: Any?) {
-        logger.info("Receive Message from ${KafkaTopicConfig.DEFAULT_TOPIC}, values $record")
+        logger.info("Receive Message from ${KafkaTopicConfig.DEFAULT_TOPIC}, values :  $record")
     }
+
+
+    @KafkaListener(
+        topics = ["\${kafka.topic-with-key}"],
+        containerFactory = "defaultKafkaListenerContainerFactory",
+        autoStartup = "true"
+    )
+    fun listenTopicWithKey(record: Any?) {
+        logger.info("Receive Message from $record")
+    }
+
 }

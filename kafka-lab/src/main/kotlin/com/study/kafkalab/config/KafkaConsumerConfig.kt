@@ -19,6 +19,13 @@ class KafkaConsumerConfig {
     @Value("\${kafka.bootstrap-servers}")
     private lateinit var bootstrapServer: String
 
+    @Bean
+    fun defaultKafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, Any> =
+        ConcurrentKafkaListenerContainerFactory<String, Any>().apply {
+            consumerFactory = consumerFactory("defaultGroup")
+            setConcurrency(1)
+            setAutoStartup(true)
+        }
 
     private fun consumerFactory(groupId: String): ConsumerFactory<String, Any?> {
         val props = HashMap<String, Any>()
@@ -33,11 +40,4 @@ class KafkaConsumerConfig {
         return DefaultKafkaConsumerFactory(props, StringDeserializer(), jsonDeserializer)
     }
 
-    @Bean
-    fun defaultKafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, Any> =
-        ConcurrentKafkaListenerContainerFactory<String, Any>().apply {
-            consumerFactory = consumerFactory("defaultGroup")
-            setConcurrency(1)
-            // isAutoStartup = true
-        }
 }

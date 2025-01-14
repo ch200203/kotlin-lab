@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: kafka-lab
+
+  profiles:
+    active: test
+
+  kafka:
+    bootstrap-servers: localhost:29092,localhost:39092,localhost:49092
+
+
+test:
+  value: hello-world
+
+

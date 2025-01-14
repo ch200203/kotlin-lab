@@ -11,7 +11,7 @@ import org.springframework.kafka.core.KafkaAdmin
 class KafkaAdminConfig {
 
     @Value("\${kafka.bootstrap-servers}")
-    private val bootstrapServer: String? = null
+    private lateinit var bootstrapServer: String
 
     @Bean
     fun kafkaAdmin(): KafkaAdmin {
