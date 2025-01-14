@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.BeanPropertyRowMapper
 import javax.sql.DataSource
 
-@Configuration
 class JdbcCursorItemReaderConfig(
     private val dataSource: DataSource
 ) {

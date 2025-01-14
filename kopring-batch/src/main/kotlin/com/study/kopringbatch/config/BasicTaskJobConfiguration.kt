@@ -14,12 +14,11 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.transaction.PlatformTransactionManager
 
-
-@Configuration
+// @Configuration
 class BasicTaskJobConfiguration {
     private val logger = KotlinLogging.logger { }
 
-    @Autowired
+    // @Autowired
     lateinit var transactionManager: PlatformTransactionManager
 
     @Bean
