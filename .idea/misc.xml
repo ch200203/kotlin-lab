@@ -3,13 +3,7 @@
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$/batch-quiz" />
-    <file type="web" url="file://$PROJECT_DIR$/co-board-example" />
-    <file type="web" url="file://$PROJECT_DIR$/exposed-spring-example" />
-    <file type="web" url="file://$PROJECT_DIR$/extension-func" />
-    <file type="web" url="file://$PROJECT_DIR$/kopring-batch" />
-    <file type="web" url="file://$PROJECT_DIR$/kotlin-basic" />
-    <file type="web" url="file://$PROJECT_DIR$/spring-corutine" />
-    <file type="web" url="file://$PROJECT_DIR$/webflux-example" />
+    <file type="web" url="file://$PROJECT_DIR$/desgin-pattern" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="temurin-21" project-jdk-type="JavaSDK" />
 </project>
