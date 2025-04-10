@@ -18,7 +18,7 @@ services:
     ports:
       - "29092:29092"
     environment:
-      KAFKA_BROKER_ID: 1 # 카카 브로커 아이디 지정
+      KAFKA_BROKER_ID: 1 # 카프카 브로커 아이디 지정
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181" # 카프카 <-> 주키퍼 커넥션 대상 설정
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092 # 외부에서 접속가능한 리스너 설정
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT # 보안을 위한 프로토콜 매핑값

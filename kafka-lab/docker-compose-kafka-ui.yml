@@ -8,4 +8,4 @@ services:
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "localhost:29092,localhost:39092,localhost:49092"
-      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper-1:22181
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper-1:22181,zookeeper-2:32182,zookeeper-3:42183
