@@ -1,4 +1,4 @@
-package decorator.example
+package com.design.decorator.example
 
 abstract class CondimentDecorator(
     protected val beverage: Beverage
