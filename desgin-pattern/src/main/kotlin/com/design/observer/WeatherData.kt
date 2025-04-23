@@ -1,4 +1,4 @@
-package observer
+package com.design.observer
 
 class WeatherData : Subject {
 
