@@ -14,9 +14,4 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig
 @EmbeddedKafka(partitions = 1, brokerProperties = ["auto-offset-seconds=0"])
 class KafkaServiceTest {
 
-    @Test
-    fun test(broker: EmbeddedKafkaBroker) {
-        val brokersAsString = broker.brokersAsString
-    }
-
 }

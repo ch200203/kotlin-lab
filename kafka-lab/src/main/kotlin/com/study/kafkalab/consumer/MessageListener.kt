@@ -1,6 +1,7 @@
 package com.study.kafkalab.consumer
 
 import com.study.kafkalab.config.KafkaTopicConfig
+import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component
@@ -13,14 +14,14 @@ class MessageListener {
     }
 
     @KafkaListener(
-        topics = [KafkaTopicConfig.DEFAULT_TOPIC],
+        topics = ["DEFAULT_TOPIC"],
         containerFactory = "defaultKafkaListenerContainerFactory",
-        autoStartup = "true"
+        autoStartup = "true",
+        groupId = "defaultGroup"
     )
     fun listenDefaultTopic(record: Any?) {
         logger.info("Receive Message from ${KafkaTopicConfig.DEFAULT_TOPIC}, values :  $record")
     }
-
 
     @KafkaListener(
         topics = ["\${kafka.topic-with-key}"],

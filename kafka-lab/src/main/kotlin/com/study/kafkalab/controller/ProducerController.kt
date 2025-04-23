@@ -40,7 +40,7 @@ class ProducerController(
     }
 
 
-    @PostMapping("produce")
+    @PostMapping("/produce")
     fun produceMessage(@RequestBody testEntity: TestEntity): ResponseEntity<TestEntity> {
         testEntity.time = LocalDateTime.now()
 
@@ -89,7 +89,7 @@ class ProducerController(
         return ResponseEntity.ok(testEntity)
     }
 
-    @PostMapping("produce-with-priority/{key}")
+    @PostMapping("/produce-with-priority/{key}")
     fun produceMessageWithPriority(
         @PathVariable("key") key: String?,
         @RequestBody testEntity: TestEntity

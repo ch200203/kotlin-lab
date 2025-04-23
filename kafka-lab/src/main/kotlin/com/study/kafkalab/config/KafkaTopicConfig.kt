@@ -13,7 +13,6 @@ class KafkaTopicConfig(
     val kafkaAdmin: KafkaAdmin,
 ) {
 
-
     @Value("\${kafka.topic-with-key}")
     private lateinit var TOPIC_WITH_KEY: String
 
@@ -35,38 +34,38 @@ class KafkaTopicConfig(
 
     private fun defaultTopic(): NewTopic =
         TopicBuilder.name(DEFAULT_TOPIC)
-            .partitions(2) // 카프카 플러스터 3개의 브로커로 구성함 -> 파티션 2개, 복제계수 2로 지정
+            .partitions(2) // 카프카 클러스터 3개의 브로커로 구성함 -> 파티션 2개, 복제계수 2로 지정
             .replicas(2)
             .build()
 
     private fun topicWithKey(): NewTopic =
         TopicBuilder.name(TOPIC_WITH_KEY)
             .partitions(2)
-            .replicas(2)
+            .replicas(1)
             .build()
 
     private fun topicWithPriority(): NewTopic =
         TopicBuilder.name(TOPIC_WITH_PRIORITY)
             .partitions(2)
-            .replicas(2)
+            .replicas(1)
             .build()
 
     private fun topicCommonError(): NewTopic =
         TopicBuilder.name(TOPIC_COMMON_ERROR)
             .partitions(3)
-            .replicas(2)
+            .replicas(1)
             .build()
 
     private fun topicErrorHandle(): NewTopic =
         TopicBuilder.name(TOPIC_ERROR_HANDLER)
             .partitions(3)
-            .replicas(2)
+            .replicas(1)
             .build()
 
     private fun topicRetryHandle(): NewTopic =
         TopicBuilder.name(TOPIC_RETRY_HANDLER)
             .partitions(3)
-            .replicas(2)
+            .replicas(1)
             .build();
 
     /**

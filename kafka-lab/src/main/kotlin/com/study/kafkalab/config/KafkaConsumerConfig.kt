@@ -1,6 +1,7 @@
 package com.study.kafkalab.config
 
 import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -12,8 +13,6 @@ import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.listener.DefaultErrorHandler
 import org.springframework.kafka.support.serializer.JsonDeserializer
-import org.springframework.retry.policy.SimpleRetryPolicy
-import org.springframework.retry.support.RetryTemplate
 import org.springframework.util.backoff.FixedBackOff
 
 
@@ -40,87 +39,76 @@ class KafkaConsumerConfig {
         val props = HashMap<String, Any>()
         props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapServer
         props[ConsumerConfig.GROUP_ID_CONFIG] = groupId
+        props[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "earliest"
 
-        val jsonDeserializer = JsonDeserializer<Any>().apply {
-            // Deserialize에 대해서 신뢰하는 패키지를 지정한다. "*"를 지정하면 모두 신뢰하게 된다.
+        val jsonDeserializer = JsonDeserializer(Any::class.java).apply {
             addTrustedPackages("*")
         }
 
         return DefaultKafkaConsumerFactory(props, StringDeserializer(), jsonDeserializer)
     }
 
-    // 높은 우선순위 처리를 위한 컨슈머 추가
     @Bean
     fun highPriorityKafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, Any> =
         ConcurrentKafkaListenerContainerFactory<String, Any>().apply {
-            consumerFactory = consumerFactory("consumerGroupHighPriority") // 컨슈머 그룹이름 설정
-            // 레코드가 들어오면 setRecordFilterStrategy 에 의해서 hightPriority 로 키가 없다면 필터링 처리되어서 메시지를 버리게 된다.
-            setRecordFilterStrategy { consumerRecord -> "highPriority" != consumerRecord.key() }
+            consumerFactory = consumerFactory("consumerGroupHighPriority")
+            setRecordFilterStrategy { consumerRecord -> consumerRecord.key() != "highPriority" }
             setConcurrency(1)
             setAutoStartup(true)
         }
 
-    // 일반 우선순위를 위한 컨슈머 추가
     @Bean
     fun normalPriorityKafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, Any> =
         ConcurrentKafkaListenerContainerFactory<String, Any>().apply {
-            consumerFactory = consumerFactory("consumerGroupNormalPriority") // 컨슈머 그룹이름 설정
-            setRecordFilterStrategy { consumerRecord -> "highPriority" == consumerRecord.key() }
+            consumerFactory = consumerFactory("consumerGroupNormalPriority")
+            setRecordFilterStrategy { consumerRecord -> consumerRecord.key() == "highPriority" }
             setConcurrency(1)
             setAutoStartup(true)
         }
-
 
     @Bean
     fun errorCommonHandlingKafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, Any> =
         ConcurrentKafkaListenerContainerFactory<String, Any>().apply {
             consumerFactory = consumerFactory("errorHandlingConsumerGroup")
-            // 기본 Error 핸들러 등록
-            // SeekToCurrentErrorHandler 의 경우, 현재 읽은 오프셋에서 에러가 발생하면 FixedBackOff 등으로 설정한 backoff 만큼 기다리다가 다시 메시지를 읽는다.
-            // FixedBackOff(주기(밀리세컨), 최대재시도횟수) 로 백오프를 지정했다.
             setCommonErrorHandler(DefaultErrorHandler(FixedBackOff(100, 2)))
             setConcurrency(1)
             setAutoStartup(true)
         }
 
-
-    /**
-     * 카프카 버전이 바뀌면서
-     * 기존의 ErrorHandler 는 CommonErrorHandler 로 통합됨
-     */
     @Bean
     fun errorHandlingKafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, Any> =
         ConcurrentKafkaListenerContainerFactory<String, Any>().apply {
             consumerFactory = consumerFactory("errorHandlingConsumerGroup")
-            // SeekToCurrentErrorHandler 의 경우, 현재 읽은 오프셋에서 에러가 발생하면 FixedBackOff 등으로 설정한 backoff 만큼 기다리다가 다시 메시지를 읽는다.
-            // FixedBackOff(주기(밀리세컨), 최대재시도횟수) 로 백오프를 지정했다.
-            setCommonErrorHandler(DefaultErrorHandler({ record, exception ->
-                logger.error("Error processing record: $record with exception: $exception")
-            }))
+            setCommonErrorHandler(
+                DefaultErrorHandler({ record, exception ->
+                    logger.error("Error processing record: $record with exception: $exception")
+                })
+            )
             setConcurrency(1)
             setAutoStartup(true)
         }
 
     /**
-     * Recovery 처리하기.
+     * Recovery 처리: 재시도 최대 5회 후, Recovery 콜백에서 로그 출력
      */
     @Bean
     fun recoveryHandlingKafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, Any> =
         ConcurrentKafkaListenerContainerFactory<String, Any>().apply {
             consumerFactory = consumerFactory("retryHandlingConsumerGroup")
-            setReplyTemplate()
+
+            val errorHandler = DefaultErrorHandler(
+                { record: ConsumerRecord<*, *>, ex: Exception ->
+                    logger.warn("Recovery callback triggered. Message: ${record.value()}, exception: ${ex.message}")
+                },
+                FixedBackOff(100L, 4L) // 총 5번 시도 (초기 + 4회 재시도)
+            )
+
+            errorHandler.addRetryableExceptions(RetryTestException::class.java)
+
+            setCommonErrorHandler(errorHandler)
+            setConcurrency(1)
+            setAutoStartup(true)
         }
-
-    private fun retryTemplate(): RetryTemplate =
-        RetryTemplate().apply {
-            setRetryPolicy()
-        }
-
-    private fun getSimpleRetryPolicy(): SimpleRetryPolicy {
-        val exceptionMap: Map<Class<? extens Throwable>>  = mapOf(RetryTestException::class.java to true)
-        return SimpleRetryPolicy(5, exceptionMap, true)
-    }
-
 }
 
 // 재처리를 위한 Exception 정의
