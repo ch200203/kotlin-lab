@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation(kotlin("test"))
 }
 
