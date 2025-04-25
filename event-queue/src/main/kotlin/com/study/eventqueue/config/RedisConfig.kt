@@ -3,6 +3,7 @@ package com.study.eventqueue.config
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
 import org.springframework.data.redis.cache.CacheKeyPrefix
 import org.springframework.data.redis.cache.RedisCacheConfiguration
 import org.springframework.data.redis.cache.RedisCacheManager
@@ -24,7 +25,6 @@ class RedisConfig(
     @Value("\${spring.data.redis.host}") private val host: String,
     @Value("\${spring.data.redis.port}") private val port: Int,
 ) {
-
     @Bean(name = ["cacheManager"])
     fun cacheManager(connectionFactory: RedisConnectionFactory): RedisCacheManager {
         // 공통 캐시 설정 TTL 1시간, null 캐시 금지, prefix 적용
@@ -54,6 +54,10 @@ class RedisConfig(
     // Lettuce 기반 연결 팩토리 생성
     @Bean
     fun redisConnectionFactory(): RedisConnectionFactory = LettuceConnectionFactory(host, port)
+
+    @Bean
+    @Primary
+    fun reactiveRedisConnectionFactory(): ReactiveRedisConnectionFactory = LettuceConnectionFactory(host, port)
 
     @Bean
     fun redisTemplate(): RedisTemplate<String, Any> {
