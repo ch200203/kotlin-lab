@@ -11,6 +11,9 @@ import java.time.Duration
 import java.time.Instant
 
 
+/**
+ * WebFlux 기반의 이벤트 큐 컨트롤러
+ */
 @RestController
 @RequestMapping("/api/v1/event-queue")
 class EventQueueController(
@@ -28,6 +31,9 @@ class EventQueueController(
             }
     }
 
+    /**
+     * 주기적으로 대기열 순위를 업데이트 해주기 위한 SSE
+     */
     @GetMapping("/stream", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun streamQueue(@RequestParam userId: Long): Flux<ServerSentEvent<String>> {
         return Flux.interval(Duration.ofSeconds(1))

@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/advanced" />
+    <file type="web" url="file://$PROJECT_DIR$/basic-kotlin" />
     <file type="web" url="file://$PROJECT_DIR$/batch-quiz" />
     <file type="web" url="file://$PROJECT_DIR$/desgin-pattern" />
     <file type="web" url="file://$PROJECT_DIR$/event-queue" />
